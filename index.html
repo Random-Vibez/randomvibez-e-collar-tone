@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080a14">
+  <meta name="description" content="A browser-local synthesized e-collar-style tone. Tap for one short beep or hold for a continuous tone.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <link rel="canonical" href="https://randomvibez.ai/e-collar-tone/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>E-Collar Tone — RandomVibez.ai</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the tone control</a>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="RandomVibez home"><span class="brand-mark" aria-hidden="true">RV</span><span>RandomVibez.ai</span></a>
+    <nav aria-label="Site links"><a href="/">All tools</a><a href="/privacy.html">Privacy</a></nav>
+  </header>
+  <div id="cookie-notice-slot"></div>
+  <main id="main" class="shell">
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">EVERYDAY UTILITY / AUDIO TOOL</p>
+      <h1 id="page-title">E-Collar <span>Tone</span></h1>
+      <p class="lede">One direct control for a synthesized, high-pitched electronic beep. Tap once for a short tone, or keep holding for continuous sound.</p>
+    </section>
+
+    <section class="tone-panel" aria-labelledby="control-title">
+      <div class="signal-orbit orbit-one" aria-hidden="true"></div>
+      <div class="signal-orbit orbit-two" aria-hidden="true"></div>
+      <div class="tone-readout">
+        <p class="eyebrow">BROWSER AUDIO</p>
+        <h2 id="control-title">Press to play</h2>
+        <p class="instruction">Tap for one 220 ms beep<br>Hold to sustain · release to stop</p>
+      </div>
+      <button id="tone-button" class="tone-button" type="button" aria-label="Play a synthesized high-pitched beep: tap for one beep or hold for a continuous tone">
+        <span class="tone-button-ring" aria-hidden="true"></span>
+        <span class="tone-button-label">TONE</span>
+        <span class="tone-button-sub" aria-hidden="true">TAP / HOLD</span>
+      </button>
+      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Ready. Tap for one beep or hold for a continuous tone.</p>
+    </section>
+
+    <aside class="privacy-note" role="note" aria-label="Audio and privacy note">
+      <span class="note-mark" aria-hidden="true">i</span>
+      <div>
+        <strong>Synthesized sound, local to this browser.</strong>
+        <p>This is an audio simulation only—not a physical e-collar, animal-training device, or training recommendation. Start at a low device volume and avoid playing it near animals or anyone who has not agreed to hear it. The app uses Web Audio and does not save or send app data. The separate site notice uses one first-party cookie only if you accept it, to remember acceptance on this browser for up to one year; <a href="/privacy.html">read the privacy details</a>.</p>
+      </div>
+    </aside>
+  </main>
+  <footer><span>E-Collar Tone · browser-local audio</span><span><a href="/privacy.html">Privacy</a> · <a href="/">RandomVibez.ai</a></span></footer>
+  <script src="app.js" defer></script>
+  <script src="../cookie-banner.js" defer></script>
+</body>
+</html>
