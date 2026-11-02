@@ -1,22 +1,25 @@
 (function (root) {
   'use strict';
 
-  const BEEP_MS = 220;
-  const FREQUENCY_HZ = 2800;
-  const GAIN_LEVEL = 0.35;
+  const BEEP_COUNT = 5;
+  const BEEP_MS = 180;
+  const BEEP_GAP_MS = 150;
+  const TOTAL_SEQUENCE_MS = BEEP_COUNT * BEEP_MS + (BEEP_COUNT - 1) * BEEP_GAP_MS;
+  const FREQUENCY_HZ = 2000;
+  const GAIN_LEVEL = 0.2;
 
-  function createToneController(options) {
+  function createBeepSequenceController(options) {
     const startTone = options.startTone;
     const stopTone = options.stopTone;
     const setTimer = options.setTimer || root.setTimeout.bind(root);
     const clearTimer = options.clearTimer || root.clearTimeout.bind(root);
-    const onSustain = options.onSustain || function () {};
+    const onBeep = options.onBeep || function () {};
+    const onSilence = options.onSilence || function () {};
     const onStopped = options.onStopped || function () {};
     const onError = options.onError || function () {};
-    const durationMs = options.durationMs == null ? BEEP_MS : options.durationMs;
     let activeToken = null;
-    let holding = false;
-    let sustaining = false;
+    let beepNumber = 0;
+    let toneActive = false;
     let timer = null;
 
     function finish(cancelled) {
@@ -25,46 +28,58 @@
         timer = null;
       }
       if (activeToken === null) return false;
+      const wasActive = activeToken;
       activeToken = null;
-      holding = false;
-      sustaining = false;
-      stopTone();
-      onStopped({ cancelled: Boolean(cancelled) });
+      if (toneActive) {
+        try { stopTone(); } catch (_) {}
+        toneActive = false;
+      }
+      onStopped({ cancelled: Boolean(cancelled), token: wasActive });
       return true;
+    }
+
+    function play(token) {
+      if (activeToken !== token) return false;
+      try {
+        startTone(beepNumber + 1);
+        toneActive = true;
+        onBeep(beepNumber + 1);
+        timer = setTimer(function () {
+          timer = null;
+          if (activeToken !== token) return;
+          if (toneActive) {
+            try { stopTone(); } catch (_) {}
+            toneActive = false;
+          }
+          if (beepNumber + 1 >= BEEP_COUNT) {
+            beepNumber = BEEP_COUNT;
+            finish(false);
+            return;
+          }
+          beepNumber += 1;
+          onSilence();
+          timer = setTimer(function () {
+            timer = null;
+            play(token);
+          }, BEEP_GAP_MS);
+        }, BEEP_MS);
+        return true;
+      } catch (error) {
+        finish(true);
+        onError(error);
+        return false;
+      }
     }
 
     function press(token) {
       if (token == null || activeToken !== null) return false;
       activeToken = token;
-      holding = true;
-      sustaining = false;
-      try {
-        startTone();
-      } catch (error) {
-        activeToken = null;
-        holding = false;
-        try { stopTone(); } catch (_) {}
-        onError(error);
-        return false;
-      }
-      timer = setTimer(function () {
-        timer = null;
-        if (activeToken !== token) return;
-        if (holding) {
-          sustaining = true;
-          onSustain();
-        } else {
-          finish(false);
-        }
-      }, durationMs);
-      return true;
+      beepNumber = 0;
+      return play(token);
     }
 
     function release(token) {
-      if (activeToken !== token) return false;
-      holding = false;
-      if (sustaining) finish(false);
-      return true;
+      return activeToken === token;
     }
 
     function cancel(token) {
@@ -78,12 +93,11 @@
       cancel,
       cancelCurrent: function () { return cancel(); },
       get active() { return activeToken !== null; },
-      get sustained() { return sustaining; },
-      get durationMs() { return durationMs; }
+      get beepNumber() { return beepNumber; }
     });
   }
 
-  const api = Object.freeze({ BEEP_MS, FREQUENCY_HZ, GAIN_LEVEL, createToneController });
+  const api = Object.freeze({ BEEP_COUNT, BEEP_MS, BEEP_GAP_MS, TOTAL_SEQUENCE_MS, FREQUENCY_HZ, GAIN_LEVEL, createBeepSequenceController });
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 
   if (!root || !root.document || root.window !== root) return;
@@ -132,22 +146,20 @@
     gainNode.gain.value = GAIN_LEVEL;
     gainNode.connect(audioContext.destination);
     oscillator = audioContext.createOscillator();
-    oscillator.type = 'square';
+    oscillator.type = 'sine';
     oscillator.frequency.value = FREQUENCY_HZ;
     oscillator.connect(gainNode);
     oscillator.start();
   }
 
-  const toneController = createToneController({
+  const toneController = createBeepSequenceController({
     startTone: startAudio,
     stopTone: stopAudio,
-    onSustain: function () {
-      button.classList.add('sounding');
-      setStatus('Continuous tone — release the button to stop.', true);
-    },
-    onStopped: function () {
+    onBeep: function () { button.classList.add('sounding'); },
+    onSilence: function () { button.classList.remove('sounding'); },
+    onStopped: function (event) {
       button.classList.remove('pressed', 'sounding');
-      setStatus('Ready. Tap for one beep or hold for a continuous tone.', false);
+      setStatus(event.cancelled ? 'Playback stopped. Ready to replay.' : 'Five-beep sequence complete. Ready to replay.', false);
     },
     onError: function (error) {
       button.classList.remove('pressed', 'sounding');
@@ -158,9 +170,10 @@
   function begin(token) {
     if (!toneController.press(token)) return false;
     button.classList.add('pressed');
-    setStatus('Playing one 220 ms beep… Keep holding for a continuous tone.', true);
+    setStatus('Playing five high-pitched beeps over 1.5 seconds…', true);
     return true;
   }
+
 
   function end(token, cancelled) {
     button.classList.remove('pressed');
@@ -238,11 +251,8 @@
       pointerId = null;
       end(token, true);
     }
-    if (activeKey !== null) {
-      const token = 'key:' + activeKey;
-      activeKey = null;
-      end(token, true);
-    }
+    activeKey = null;
+    if (toneController.active) toneController.cancelCurrent();
   });
 
   const noticeSlot = root.document.getElementById('cookie-notice-slot');

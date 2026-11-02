@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080a14">
-  <meta name="description" content="A browser-local synthesized e-collar-style tone. Tap for one short beep or hold for a continuous tone.">
+  <meta name="description" content="A browser-local synthesized tone sequence: five short, high-pitched beeps over 1.5 seconds.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <link rel="canonical" href="https://randomvibez.ai/e-collar-tone/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -22,7 +22,7 @@
     <section class="hero" aria-labelledby="page-title">
       <p class="eyebrow">EVERYDAY UTILITY / AUDIO TOOL</p>
       <h1 id="page-title">E-Collar <span>Tone</span></h1>
-      <p class="lede">One direct control for a synthesized, high-pitched electronic beep. Tap once for a short tone, or keep holding for continuous sound.</p>
+      <p class="lede">One direct control for a synthesized, high-pitched electronic beep sequence. Tap once to play five short tones over 1.5 seconds; releasing does not interrupt the sequence.</p>
     </section>
 
     <section class="tone-panel" aria-labelledby="control-title">
@@ -31,14 +31,14 @@
       <div class="tone-readout">
         <p class="eyebrow">BROWSER AUDIO</p>
         <h2 id="control-title">Press to play</h2>
-        <p class="instruction">Tap for one 220 ms beep<br>Hold to sustain · release to stop</p>
+        <p class="instruction">Tap for five 180 ms beeps<br>150 ms gaps · 1.5 s total</p>
       </div>
-      <button id="tone-button" class="tone-button" type="button" aria-label="Play a synthesized high-pitched beep: tap for one beep or hold for a continuous tone">
+      <button id="tone-button" class="tone-button" type="button" aria-label="Play five synthesized high-pitched beeps over 1.5 seconds">
         <span class="tone-button-ring" aria-hidden="true"></span>
         <span class="tone-button-label">TONE</span>
-        <span class="tone-button-sub" aria-hidden="true">TAP / HOLD</span>
+        <span class="tone-button-sub" aria-hidden="true">TAP TO PLAY</span>
       </button>
-      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Ready. Tap for one beep or hold for a continuous tone.</p>
+      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Ready. Tap to play five high-pitched beeps over 1.5 seconds.</p>
     </section>
 
     <aside class="privacy-note" role="note" aria-label="Audio and privacy note">

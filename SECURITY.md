@@ -8,7 +8,7 @@ Report security concerns privately through the contact route on <https://randomv
 
 ## Scope and limitations
 
-- The generated square-wave tone is a browser audio simulation, not a device control, animal-training system, or training advice.
+- The generated 2,000 Hz sine-wave beep sequence is a browser audio simulation, not a device control, animal-training system, or training advice.
 - Output loudness depends on the visitor's hardware and system settings. Users should start at low volume and avoid playing the sound near animals or people who have not agreed to hear it.
 - Security behavior depends in part on the effective HTTP headers of the eventual hosting environment. A CSP meta policy in the staged page is not evidence that production response headers have been configured or verified.
 - The shared site's optional first-party cookie is separate from app functionality and is not used for analytics, identity, or app data.
